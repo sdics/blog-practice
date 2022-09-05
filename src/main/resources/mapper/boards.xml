@@ -15,8 +15,12 @@
 	</select>
 
 	<select id="findAll"
-		resultType="site.metacoding.red.domain.boards.Boards">
-
+		resultType="site.metacoding.red.domain.boards.mapper.MainView">
+		SELECTG b.id, b.title, u.username
+		FROM boards b
+		INNER JOIN users u
+		ON b.usersId = u.id
+		ORDER BY b.id DESC
 	</select>
 
 	<update id="update">

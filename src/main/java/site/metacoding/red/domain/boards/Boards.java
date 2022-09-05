@@ -2,7 +2,6 @@ package site.metacoding.red.domain.boards;
 
 import java.sql.Timestamp;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,7 +17,6 @@ public class Boards {
 	private Timestamp createdAt;
 	
 	public Boards(String title, String content, Integer usersId) {
-		super();
 		this.title = title;
 		this.content = content;
 		this.usersId = usersId;

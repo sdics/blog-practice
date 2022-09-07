@@ -40,10 +40,10 @@ public class UsersController {
 
 	@PostMapping("/join")
 	public String join(JoinDto joinDto) {
-			usersDao.insert(joinDto);
-			return "redirect:/loginForm";
+		usersDao.insert(joinDto);
+		return "redirect:/loginForm";
 	}
-	
+
 	@GetMapping("/loginForm")
 	public String loginForm() {
 		return "users/loginForm";

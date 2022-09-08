@@ -4,18 +4,25 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="site.metacoding.red.domain.boards.BoardsDao">
 
+
+
 	<select id="paging"
 		resultType="site.metacoding.red.web.dto.response.boards.PagingDto">
-		select
-		totalCount,
-		ceil(totalCount/3) totalPage,
+		SELECT totalCount,
+		totalPage,
 		currentPage,
-		decode(currentPage, ceil(totalCount/3)-1, 1, 0) last,
-		decode(currentPage, 0, 1, 0) first
-		from
+		decode(currentPage, 0, 1, 0) first,
+		decode(currentPage, totalPage-1, 1,
+		0) last
+		FROM
 		(
-		select count(*) totalCount,
-		#{page} currentPage from boards
+		select count(*) totalCount, ceil(count(*)/3) totalPage,
+		#{page} currentPage, 0
+		first, 0 last
+		FROM boards
+		<if test="keyword != null">
+			WHERE title like '%'||#{keyword}||'%'
+		</if>
 		)
 	</select>
 
@@ -28,7 +35,21 @@
 
 	<select id="findById"
 		resultType="site.metacoding.red.domain.boards.Boards">
-		SELECT id, title, content, usersId FROM boards WHERE id=#{id}
+		SELECT id, title, content, usersId, createdAt FROM boards
+		WHERE id=#{id}
+	</select>
+
+	<select id="findSearch"
+		resultType="site.metacoding.red.web.dto.response.boards.MainDto">
+		SELECT b.id, b.title, u.username
+		FROM boards b
+		INNER JOIN
+		users u
+		ON b.usersId = u.id
+		WHERE title like '%'||#{keyword}||'%'
+		ORDER BY b.id DESC
+		OFFSET #{startNum} ROWS
+		FETCH NEXT 3 ROWS ONLY
 	</select>
 
 	<select id="findAll"
@@ -44,7 +65,8 @@
 	</select>
 
 	<update id="update">
-		UPDATE boards SET title = #{title}, content = #{content} WHERE id = #{id}
+		UPDATE boards SET title = #{title}, content =
+		#{content} WHERE id = #{id}
 	</update>
 
 	<delete id="delete">
